@@ -7,15 +7,25 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(behaviortree_cpp REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+include_directories(${behaviortree_cpp_INCLUDE_DIRS})
 
 add_executable(main src/main.cpp)
 target_include_directories(main PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 target_compile_features(main PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+ament_target_dependencies(
+  main
+  rclcpp
+  behaviortree_cpp
+)
+
+target_link_libraries(main ${behaviortree_cpp_LIBRARIES})
 
 install(TARGETS main
   DESTINATION lib/${PROJECT_NAME})
