@@ -44,16 +44,26 @@ class vehicleMode : public BT::SyncActionNode {
   public:
     vehicleMode(const string& name) : BT::SyncActionNode(name, {}) {}
     NodeStatus tick() override {
-      cout << "Vehcile's mode changes" << this->name() << endl;
+      cout << "Vehicle's mode changes" << this->name() << endl;
       return BT::NodeStatus::SUCCESS;
     }
 };
 
+static const char* xml = R"()";
+
 int main(int argc, char ** argv)
 {
+  BehaviorTreeFactory factory;
   (void) argc;
   (void) argv;
 
-  printf("ardupilot_bt package\n");
+  factory.registerNodeType<>("");
+
+  factory.registerSimpleCondition("", std::bind());
+
+  auto tree = factory.createTreeFromText(xml);
+
+  tree.tickRoot();
+
   return 0;
 }
