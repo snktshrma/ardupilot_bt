@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4">
+  <BehaviorTree ID="main">
+    <Sequence name="root_sequence">
+      <changeMode modeNum="1"/>
+      <RetryUntilSuccessful num_attempts="">
+        <checkPrearm/>
+      </RetryUntilSuccessful>
+      <arm/>
+      <Takeoff/>
+    </Sequence>
+  </BehaviorTree>
+
+  <!-- Description of Node Models (used by Groot) -->
+  <TreeNodesModel>
+    <Action ID="Takeoff"
+            editable="true"/>
+    <Action ID="arm"
+            editable="true"/>
+    <Action ID="changeMode"
+            editable="true">
+      <input_port name="modeNum"
+                  default="1">Mode number</input_port>
+    </Action>
+    <Condition ID="checkPrearm"
+               editable="true"/>
+  </TreeNodesModel>
+
+</root>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" project_name="Project">
+    <include path="ap_bt.xml"/>
+    <!-- Description of Node Models (used by Groot) -->
+    <TreeNodesModel>
+        <Action ID="Takeoff" editable="true"/>
+        <Action ID="arm" editable="true"/>
+        <Action ID="changeMode" editable="true">
+            <input_port name="modeNum" default="1">Mode number</input_port>
+        </Action>
+        <Condition ID="checkPrearm" editable="true"/>
+    </TreeNodesModel>
+</root>
