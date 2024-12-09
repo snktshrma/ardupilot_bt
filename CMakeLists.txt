@@ -9,25 +9,40 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(behaviortree_cpp REQUIRED)
+find_package(behaviortree_ros2 REQUIRED)
+find_package(btcpp_ros2_interfaces REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
-include_directories(${behaviortree_cpp_INCLUDE_DIRS})
+include_directories(${behaviortree_cpp_INCLUDE_DIRS} ${behaviortree_ros2_INCLUDE_DIRS} ${btcpp_ros2_interfaces_INCLUDE_DIRS})
 
 add_executable(main src/main.cpp)
+add_executable(main_ros src/main_ros.cpp)
 target_include_directories(main PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 target_compile_features(main PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+
+target_include_directories(main_ros PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_compile_features(main_ros PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 ament_target_dependencies(
   main
   rclcpp
   behaviortree_cpp
+  behaviortree_ros2
+  btcpp_ros2_interfaces
+  std_msgs
+  std_srvs
 )
 
-target_link_libraries(main ${behaviortree_cpp_LIBRARIES})
+target_link_libraries(main ${behaviortree_cpp_LIBRARIES} ${behaviortree_ros2_LIBRARIES} ${btcpp_ros2_interfaces_LIBRARIES})
+target_link_libraries(main_ros ${behaviortree_cpp_LIBRARIES} ${behaviortree_ros2_LIBRARIES} ${btcpp_ros2_interfaces_LIBRARIES})
 
-install(TARGETS main
+install(TARGETS main main_ros
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)

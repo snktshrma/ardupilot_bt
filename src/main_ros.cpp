@@ -1,5 +1,27 @@
-#include <cstdio>
-#include "behaviortree_cpp/bt_factory.h"
+#include <behaviortree_ros2/bt_action_node.hpp>
+#include <iostream>
+#include <rclcpp/executors.hpp>
+#include <rclcpp/rclcpp.hpp>
+
+#include "behaviortree_cpp/basic_types.h"
+#include "behaviortree_cpp/tree_node.h"
+// #include "std_msgs/msg/string.hpp"
+#include <atomic>
+#include <chrono>
+#include <cmath>
+#include <functional>
+#include <memory>
+#include <string>
+#include <thread>
+
+// #include "geometry_msgs/msg/twist.hpp"
+// #include "nav_msgs/msg/odometry.hpp"
+// #include "sensor_msgs/msg/laser_scan.hpp"
+// #include <geometry_msgs/msg/pose_stamped.hpp>
+// #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+
+// #include "behaviortree_cpp/loggers/bt_file_logger.h"
+#include <math.h>
 
 using namespace BT;
 using namespace std;
@@ -10,7 +32,7 @@ class changeMode : public BT::SyncActionNode {
   public:
     changeMode(const string& name) : BT::SyncActionNode(name, {}) {}
     NodeStatus tick() override {
-      cout << "Changing Mode: " << this->name() << endl;
+      cout << "Changing Mode" << this->name() << endl;
       return BT::NodeStatus::SUCCESS;
     }
 };
@@ -58,12 +80,12 @@ static const char* xml = R"(<?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
   <BehaviorTree ID="main">
     <Sequence name="root_sequence">
-      <changeMode name="mode_change"/>
+      <changeMode name="mode_change" modeNum="1"/>
       <RetryUntilSuccessful num_attempts="10">
         <checkPrearm name="prearm_check"/>
       </RetryUntilSuccessful>
       <arm name="arm"/>
-      <takeoff name="takeoff"/>
+      <Takeoff name="takeoff"/>
     </Sequence>
   </BehaviorTree>
 
