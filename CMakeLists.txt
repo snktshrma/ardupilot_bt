@@ -8,11 +8,29 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclcpp_action REQUIRED)
 find_package(behaviortree_cpp REQUIRED)
 find_package(behaviortree_ros2 REQUIRED)
 find_package(btcpp_ros2_interfaces REQUIRED)
+find_package(ament_index_cpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(nav2_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+
+find_package(cv_bridge REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(image_transport REQUIRED)
+
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
+
+find_package(rosidl_default_generators REQUIRED)
+
+# rosidl_generate_interfaces(${PROJECT_NAME}
+#   "action/Sleep.action"
+# )
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -35,6 +53,33 @@ ament_target_dependencies(
   behaviortree_cpp
   behaviortree_ros2
   btcpp_ros2_interfaces
+  geometry_msgs
+  sensor_msgs
+  nav2_msgs
+  tf2_ros
+  sensor_msgs
+  image_transport
+  cv_bridge
+  OpenCV
+  std_msgs
+  std_srvs
+)
+
+ament_target_dependencies(
+  main_ros
+  rclcpp
+  behaviortree_cpp
+  behaviortree_ros2
+  btcpp_ros2_interfaces
+  geometry_msgs
+  sensor_msgs
+  nav2_msgs
+  tf2_ros
+  tf2_geometry_msgs
+  sensor_msgs
+  image_transport
+  cv_bridge
+  OpenCV
   std_msgs
   std_srvs
 )
