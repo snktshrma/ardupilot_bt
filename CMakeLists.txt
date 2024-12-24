@@ -18,26 +18,20 @@ find_package(geometry_msgs REQUIRED)
 find_package(nav2_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
-
 find_package(cv_bridge REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(image_transport REQUIRED)
-
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
-
 find_package(rosidl_default_generators REQUIRED)
+find_package(ardupilot_msgs REQUIRED)
 
-# rosidl_generate_interfaces(${PROJECT_NAME}
-#   "action/Sleep.action"
-# )
-# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
 include_directories(${behaviortree_cpp_INCLUDE_DIRS} ${behaviortree_ros2_INCLUDE_DIRS} ${btcpp_ros2_interfaces_INCLUDE_DIRS})
 
 add_executable(main src/main.cpp)
 add_executable(main_ros src/main_ros.cpp)
+add_executable(ap_ros src/ap_ros.cpp)
+
 target_include_directories(main PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
@@ -47,12 +41,14 @@ target_include_directories(main_ros PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 target_compile_features(main_ros PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+
 ament_target_dependencies(
   main
   rclcpp
   behaviortree_cpp
   behaviortree_ros2
   btcpp_ros2_interfaces
+  ardupilot_msgs
   geometry_msgs
   sensor_msgs
   nav2_msgs
@@ -71,6 +67,27 @@ ament_target_dependencies(
   behaviortree_cpp
   behaviortree_ros2
   btcpp_ros2_interfaces
+  ardupilot_msgs
+  geometry_msgs
+  sensor_msgs
+  nav2_msgs
+  tf2_ros
+  tf2_geometry_msgs
+  sensor_msgs
+  image_transport
+  cv_bridge
+  OpenCV
+  std_msgs
+  std_srvs
+)
+
+ament_target_dependencies(
+  ap_ros
+  rclcpp
+  behaviortree_cpp
+  behaviortree_ros2
+  btcpp_ros2_interfaces
+  ardupilot_msgs
   geometry_msgs
   sensor_msgs
   nav2_msgs
@@ -86,18 +103,14 @@ ament_target_dependencies(
 
 target_link_libraries(main ${behaviortree_cpp_LIBRARIES} ${behaviortree_ros2_LIBRARIES} ${btcpp_ros2_interfaces_LIBRARIES})
 target_link_libraries(main_ros ${behaviortree_cpp_LIBRARIES} ${behaviortree_ros2_LIBRARIES} ${btcpp_ros2_interfaces_LIBRARIES})
+target_link_libraries(ap_ros ${behaviortree_cpp_LIBRARIES} ${behaviortree_ros2_LIBRARIES} ${btcpp_ros2_interfaces_LIBRARIES})
 
-install(TARGETS main main_ros
+install(TARGETS main main_ros ap_ros
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # comment the line when a copyright and license is added to all source files
   set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # comment the line when this package is in a git repo and when
-  # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
