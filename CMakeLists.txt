@@ -29,8 +29,7 @@ find_package(ardupilot_msgs REQUIRED)
 include_directories(${behaviortree_cpp_INCLUDE_DIRS} ${behaviortree_ros2_INCLUDE_DIRS} ${btcpp_ros2_interfaces_INCLUDE_DIRS})
 
 add_executable(main src/main.cpp)
-add_executable(main_ros src/main_ros.cpp)
-add_executable(ap_ros src/ap_ros.cpp)
+add_executable(main_ros src/main_ros.cpp src/ap_ros.cpp)
 
 target_include_directories(main PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -81,31 +80,10 @@ ament_target_dependencies(
   std_srvs
 )
 
-ament_target_dependencies(
-  ap_ros
-  rclcpp
-  behaviortree_cpp
-  behaviortree_ros2
-  btcpp_ros2_interfaces
-  ardupilot_msgs
-  geometry_msgs
-  sensor_msgs
-  nav2_msgs
-  tf2_ros
-  tf2_geometry_msgs
-  sensor_msgs
-  image_transport
-  cv_bridge
-  OpenCV
-  std_msgs
-  std_srvs
-)
-
 target_link_libraries(main ${behaviortree_cpp_LIBRARIES} ${behaviortree_ros2_LIBRARIES} ${btcpp_ros2_interfaces_LIBRARIES})
 target_link_libraries(main_ros ${behaviortree_cpp_LIBRARIES} ${behaviortree_ros2_LIBRARIES} ${btcpp_ros2_interfaces_LIBRARIES})
-target_link_libraries(ap_ros ${behaviortree_cpp_LIBRARIES} ${behaviortree_ros2_LIBRARIES} ${btcpp_ros2_interfaces_LIBRARIES})
 
-install(TARGETS main main_ros ap_ros
+install(TARGETS main main_ros
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)

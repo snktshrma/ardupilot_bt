@@ -19,9 +19,10 @@
 
 // ROS2 Collaborative Drones Libraries
 #include "ardupilot_msgs/srv/takeoff.hpp"
+#include "ardupilot_msgs/srv/mode_switch.hpp"
+#include "ardupilot_msgs/srv/arm_motors.hpp"
 
 // Namespaces
-using namespace BT;
 using namespace std;
 using namespace std::chrono;
 using namespace std::chrono_literals;
@@ -30,6 +31,10 @@ class ROSControl : public rclcpp::Node {
 public:
     ROSControl();
 
+    bool takeoff_control(float altitude);
+    bool arm_control();
+    bool mode_switch();
+
 private:
     // Publishers
 
@@ -37,6 +42,8 @@ private:
 
     // Service Clients
     rclcpp::Client<ardupilot_msgs::srv::Takeoff>::SharedPtr takeoff_client_;
+    rclcpp::Client<ardupilot_msgs::srv::ModeSwitch>::SharedPtr switch_mode_client_;
+    rclcpp::Client<ardupilot_msgs::srv::ArmMotors>::SharedPtr arm_client_;
 
     // Callback Groups
     rclcpp::CallbackGroup::SharedPtr callback_group_1;
@@ -46,10 +53,6 @@ private:
 
     // Input Trajectory
     // Method Declarations
-
-    void arm();
-
-    void takeoff();
 
 };
 

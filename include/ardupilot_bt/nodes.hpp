@@ -114,7 +114,7 @@ class takeoff : public BT::SyncActionNode {
   // Add the sequence and fallbacks to confirm if takeoff is success
 
   public:
-    takeoff(const string& name, const NodeConfig& config) : BT::SyncActionNode(name, config) {}
+    takeoff(const string& name, const NodeConfig& config, std::shared_ptr<ROSControl> ros_control) : BT::SyncActionNode(name, config), ros_control_(ros_control) {}
 
     static PortsList providedPorts() {
         return { InputPort<float>("alt") };
@@ -122,13 +122,21 @@ class takeoff : public BT::SyncActionNode {
 
     NodeStatus tick() override {
         Expected<float> alt_ = getInput<float>("alt");
-
+        float altitude = alt_.value();
         if (!alt_) {
-            throw BT::RuntimeError("Alt to defined: ", alt_.error() );
+            throw BT::RuntimeError("Alt to be defined: ", alt_.error() );
         }
-        cout << "Taking Off! Altitude: " << alt_.value() << endl;
-        return BT::NodeStatus::SUCCESS;
+
+        if (ros_control_->takeoff_control(altitude)) {
+            cout << "Taking Off! Altitude: " << altitude << endl;
+            return BT::NodeStatus::SUCCESS;
+        } else {
+            return BT::NodeStatus::FAILURE;
+        }
+        
     }
+  private:
+    std::shared_ptr<ROSControl> ros_control_;
 };
 
 #endif /* NODE_H */

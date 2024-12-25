@@ -1,7 +1,6 @@
 /**
- * @file offb_node.cpp
- * @brief ROS control example node, written with MAVROS version 0.19.x, PX4 Pro Flight
- * Stack and tested in Gazebo Classic SITL
+ * @file ap_ros.cpp
+ * @brief AP ROS control
  */
 
 // Standard Libraries
@@ -25,22 +24,24 @@ using namespace std::chrono_literals;
 
 ROSControl::ROSControl() : rclcpp::Node("ros_control")
 {
-    takeoff_client = this->create_client<ardupilot_msgs::srv::Takeoff>("ardupilot_msgs/srv/Takeoff")
+    takeoff_client_ = this->create_client<ardupilot_msgs::srv::Takeoff>("/ap/experimental/takeoff");
+    arm_client_ = this->create_client<ardupilot_msgs::srv::ArmMotors>("/ap/arm_motors");
+    switch_mode_client_ = this->create_client<ardupilot_msgs::srv::ModeSwitch>("/ap/mode_switch");
 }
 /**
  * @brief Service to takeoff the drone
  */
-void ROSControl::takeoff(float32 altitude)
+bool ROSControl::takeoff_control(float altitude)
 {
-    auto request = std::make_shared<ardupilot_msgs::srv:::Takeoff::Request>();
+    auto request = std::make_shared<ardupilot_msgs::srv::Takeoff::Request>();
     request->alt = altitude;
 
     // Call takeoff service
     auto request_future = takeoff_client_->async_send_request(request);
-    auto result = rclcpp::spin_until_future_complete(this->get_node_base_interface(), result_future);
+    auto result = rclcpp::spin_until_future_complete(this->get_node_base_interface(), request_future);
 
-    if (result == rclcpp::FutureReturnCode::Success) {
-        auto response = result_future.get();
+    if (result == rclcpp::FutureReturnCode::SUCCESS) {
+        auto response = request_future.get();
         if (response->status) {
             RCLCPP_INFO(this->get_logger(), "Takeoff Success");
             return true;
@@ -53,16 +54,20 @@ void ROSControl::takeoff(float32 altitude)
     }
 
     return false;
+
+}
+/**
+ * @brief Service to arm the drone
+ */
+bool ROSControl::arm_control()
+{
+    return false;
 }
 
-int main(int argc, char **argv)
+/**
+ * @brief Service to switch the drone's mode
+ */
+bool ROSControl::mode_switch()
 {
-    rclcpp::init(argc, argv);
-    auto node = std::make_shared<ROSControl>();
-    rclcpp::executors::MultiThreadedExecutor executor;
-    executor.add_node(node);
-    executor.spin();
-
-    rclcpp::shutdown();
-    return 0;
+    return false;
 }
