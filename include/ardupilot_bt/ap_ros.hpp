@@ -32,13 +32,13 @@ public:
     ROSControl();
 
     bool takeoff_control(float altitude);
-    bool arm_control();
-    bool mode_switch();
+    bool arm_control(bool arm);
+    bool mode_switch(uint8_t mode);
 
 private:
-    // Publishers
-
-    // Subscribers
+    void handleTakeoff(rclcpp::Client<ardupilot_msgs::srv::Takeoff>::SharedFuture response);
+    void handleModeSwitch(rclcpp::Client<ardupilot_msgs::src::ModeSwitch>::SharedFuture response);
+    void handleArm(rclcpp::Client<ardupilot_msgs::src::ArmMotor>::SharedFuture response);
 
     // Service Clients
     rclcpp::Client<ardupilot_msgs::srv::Takeoff>::SharedPtr takeoff_client_;
@@ -51,8 +51,7 @@ private:
     // Timer
     rclcpp::TimerBase::SharedPtr timer_;
 
-    // Input Trajectory
-    // Method Declarations
+
 
 };
 

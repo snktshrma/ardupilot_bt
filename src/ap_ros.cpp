@@ -37,37 +37,79 @@ bool ROSControl::takeoff_control(float altitude)
     request->alt = altitude;
 
     // Call takeoff service
-    auto request_future = takeoff_client_->async_send_request(request);
-    auto result = rclcpp::spin_until_future_complete(this->get_node_base_interface(), request_future);
+    auto request_future = takeoff_client_->async_send_request(request, std::bind(&ROSControl::handleTakeoff, this, std::placeholders::_1));
 
-    if (result == rclcpp::FutureReturnCode::SUCCESS) {
-        auto response = request_future.get();
-        if (response->status) {
-            RCLCPP_INFO(this->get_logger(), "Takeoff Success");
-            return true;
-        } else {
-            RCLCPP_ERROR(this->get_logger(), "Takeoff Failed");
-        }
-
-    } else {
-        RCLCPP_ERROR(this->get_logger(), "Failed to call takeoff service");
-    }
-
-    return false;
-
+    return true;
 }
+
 /**
  * @brief Service to arm the drone
  */
-bool ROSControl::arm_control()
+bool ROSControl::arm_control(bool arm)
 {
-    return false;
+    auto request = std::make_shared<ardupilot_msgs::srv::ArmMotors::Request>();
+    request->arm = arm;
+
+    // Call arm service
+    auto request_future = arm_client_->async_send_request(request, std::bind(&ROSControl::handleArm, this, std::placeholders::_1));
+    return true;
 }
 
 /**
  * @brief Service to switch the drone's mode
  */
-bool ROSControl::mode_switch()
+bool ROSControl::mode_switch(uint8_t mode)
 {
-    return false;
+    auto request = std::make_shared<ardupilot_msgs::srv::ModeSwitch::Request>();
+    request->mode = mode;
+
+    // Call takeoff service
+    auto request_future = switch_mode_client_->async_send_request(request, std::bind(&ROSControl::handleModeSwitch, this, std::placeholders::_1));
+
+    return true;
 }
+
+
+
+
+
+
+
+void ROSControl::handleTakeoff(rclcpp::Client<ardupilot_msgs::srv::Takeoff>::SharedFuture response)
+{
+    auto result = response.get();
+
+    if (result->status) {
+        RCLCPP_INFO(this->get_logger(), "Takeoff Success");
+        return true;
+    } else {
+        RCLCPP_ERROR(this->get_logger(), "Takeoff Failed");
+    }
+}
+
+
+void ROSControl::handleArm(rclcpp::Client<ardupilot_msgs::srv::ArmMotors>::SharedFuture response)
+{
+    auto result = response.get();
+
+    if (result->status) {
+        RCLCPP_INFO(this->get_logger(), "Takeoff Success");
+        return true;
+    } else {
+        RCLCPP_ERROR(this->get_logger(), "Takeoff Failed");
+    }
+}
+
+
+void ROSControl::handleModeSwitch(rclcpp::Client<ardupilot_msgs::srv::ModeSwitch>::SharedFuture response)
+{
+    result = response.get();
+
+    if (result->status) {
+        RCLCPP_INFO(this->get_logger(), "Mode switched successfully to: %u", result-> curr_mode);
+        return true;
+    } else {
+        RCLCPP_ERROR(this->get_logger(), "Mode switch failed");
+    }
+}
+
